@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  s3 for mtls-sample
+Parameters:
+  TrustStoreBucketName:
+    Type: String
+    Description: TrustStoreの格納バケット名
+
+Resources:
+  TrustStoreBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Ref TrustStoreBucketName
+      VersioningConfiguration:
+        Status: Enabled
+
+Outputs:
+  TrustStoreBucketUri:
+    Description: "URI of the TrustStore S3 bucket"
+    Value: !Sub "s3://${TrustStoreBucketName}"
