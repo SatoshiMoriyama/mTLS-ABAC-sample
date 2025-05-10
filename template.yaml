@@ -145,7 +145,7 @@ Resources:
                         #foreach($header in $input.params().header.keySet())
                         "$header": "$util.escapeJavaScript($input.params().header.get($header))"#if($foreach.hasNext),#end
                         #end,
-                        "X-Client-Cert-Subject":"$context.authorizer.principalId" 
+                        "X-Client-Cert-Subject":"$context.authorizer.principalId"
                       },
                       "queryStringParameters": {
                         #foreach($param in $input.params().querystring.keySet())
