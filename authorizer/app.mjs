@@ -1,17 +1,10 @@
-import crypto from "crypto";
-
 export const authorizerHandler = async (event) => {
   console.log("> handler", JSON.stringify(event, null, 4));
 
-  const clientCertPem = event.requestContext.identity.clientCert.clientCertPem;
-  const clientCert = new crypto.X509Certificate(clientCertPem);
-  const clientCertSub = clientCert.subject.replaceAll("\n", ",");
+  const clientCertSub = event.requestContext.identity.clientCert.subjectDN;
 
   const response = {
     principalId: clientCertSub,
-    context: {
-      clientCertSub,
-    },
     policyDocument: {
       Version: "2012-10-17",
       Statement: [

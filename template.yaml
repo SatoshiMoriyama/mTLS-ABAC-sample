@@ -78,15 +78,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref StageName
-      Auth:
-        Authorizers:
-          mTLSAuthorizer:
-            FunctionArn: !GetAtt AuthorizerFunction.Arn
-            Identity:
-              Headers:
-                - Host
-            AuthorizerResultTtlInSeconds: 300
-            FunctionPayloadType: REQUEST
       Domain:
         DomainName: !Ref DomainName
         CertificateArn: !Ref CertificateArn
@@ -113,7 +104,7 @@ Resources:
               type: "request"
               authorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations"
               authorizerResultTtlInSeconds: 300
-              identitySource: "method.request.header.Authorization"
+              identitySource: "method.request.header.Host"
         paths:
           /hello:
             get:
@@ -156,6 +147,18 @@ Resources:
                         #foreach($param in $input.params().path.keySet())
                         "$param": "$util.escapeJavaScript($input.params().path.get($param))"#if($foreach.hasNext),#end
                         #end
+                      },
+                      "context": {
+                        "authorizer": {
+                          #foreach($property in $context.authorizer.keySet())
+                          "$property": "$util.escapeJavaScript($context.authorizer.get($property))"#if($foreach.hasNext),#end
+                          #end
+                        },
+                        "identity": {
+                          #foreach($property in $context.identity.keySet())
+                          "$property": "$util.escapeJavaScript($context.identity.get($property))"#if($foreach.hasNext),#end
+                          #end
+                        }
                       }
                     }
                 responses:
